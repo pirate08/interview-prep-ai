@@ -7,7 +7,7 @@ export default function Home() {
         <h1 className='text-4xl font-bold text-black dark:text-white'>
           InterviewMate AI
         </h1>
-        <p className='mt-2 text-xl'>Coming soon..</p>
+        <p className='mt-2 text-xl text-white'>Coming soon..</p>
       </div>
     </div>
   );
