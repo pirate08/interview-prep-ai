@@ -6,7 +6,7 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  otp: string; // Required for your registration flow
+  otp: string; 
 }
 
 export interface SendOtpRequest {
@@ -42,7 +42,7 @@ export interface SendOtpResponse {
   message: string;
   expiresIn: number;
   debug?: {
-    otpCode: string; // Useful for development testing
+    otpCode: string;
   };
 }
 
@@ -58,18 +58,18 @@ export interface UserData {
   name: string;
   email: string;
   bio?: string | null;
-  image?: string | null; // Prisma optional fields can return null
+  image?: string | null;
   emailVerified: Date | null;
   role: string;
-  isNewUser: boolean; // Added this as it's in your schema
+  isNewUser: boolean;
   createdAt: Date;
 
-  // Profile / Onboarding
+  // --Profile / Onboarding--
   experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | null;
   designation?: string | null;
   selectedCourse?: string | null;
 
-  // Stats - Changed to number to match 'Int' and 'Float'
+  // --Stats--
   totalRightAnswers: number;
   totalWrongAnswers: number;
   totalAiHelped: number;
