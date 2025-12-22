@@ -57,22 +57,23 @@ export interface UserData {
   id: string;
   name: string;
   email: string;
+  bio?: string | null;
   image?: string | null; // Prisma optional fields can return null
   emailVerified: Date | null;
   role: string;
   isNewUser: boolean; // Added this as it's in your schema
   createdAt: Date;
-  
+
   // Profile / Onboarding
   experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | null;
   designation?: string | null;
   selectedCourse?: string | null;
-  
+
   // Stats - Changed to number to match 'Int' and 'Float'
   totalRightAnswers: number;
   totalWrongAnswers: number;
   totalAiHelped: number;
-  journeyProgress: number; 
+  journeyProgress: number;
 }
 
 export interface RegisterResponse {
