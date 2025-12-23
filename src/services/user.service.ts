@@ -81,3 +81,30 @@ export async function UserExists(email: string): Promise<boolean> {
     return false;
   }
 }
+
+// ==========================================
+// PASSWORD OPERATIONS
+// ==========================================
+
+// --Verify user password--
+export async function VerifyPassword(
+  email: string,
+  password: string
+): Promise<boolean> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { password: true },
+    });
+
+    if (!user || !user.password) {
+      return false;
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    return isValid;
+  } catch (error) {
+    console.error('❌ Verify password error:', error);
+    return false;
+  }
+}
