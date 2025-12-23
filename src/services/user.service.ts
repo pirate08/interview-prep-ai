@@ -108,3 +108,22 @@ export async function VerifyPassword(
     return false;
   }
 }
+
+// ==========================================
+// UPDATE OPERATIONS
+// ==========================================
+
+// --Mark user's email as verified--
+export async function VerifyUserEmail(email: string) {
+  try {
+    const user = await prisma.user.update({
+      where: { email },
+      data: { emailVerified: new Date() },
+    });
+
+    return sanitizeUser(user);
+  } catch (error) {
+    console.error('❌ Verify user email error:', error);
+    return null;
+  }
+}
