@@ -2,8 +2,11 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { sanitizeUser } from '@/utils/helpers';
 
-// --Create a new user--
+// ==========================================
+// CREATE USER
+// ==========================================
 
+// --Create a new user--
 export async function CreateUser(data: {
   id: string;
   name: string;
@@ -32,6 +35,10 @@ export async function CreateUser(data: {
   }
 }
 
+// ==========================================
+// FIND USERS
+// ==========================================
+
 // --Find user by email--
 export async function FindUserByEmail(email: string) {
   try {
@@ -57,5 +64,20 @@ export async function FindUserId(id: string) {
   } catch (error) {
     console.error('❌ Find user by ID error:', error);
     return null;
+  }
+}
+
+// --Check if user exists by email--
+export async function UserExists(email: string): Promise<boolean> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    return !!user;
+  } catch (error) {
+    console.error('❌ Check user exists error:', error);
+    return false;
   }
 }
