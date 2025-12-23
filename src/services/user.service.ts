@@ -127,3 +127,26 @@ export async function VerifyUserEmail(email: string) {
     return null;
   }
 }
+
+// --Update user information--
+export async function UpdateUser(
+  id: string,
+  data: Partial<{
+    name: string;
+    email: string;
+    image: string;
+    bio: string;
+  }>
+) {
+  try {
+    const user = await prisma.user.update({
+      where: { id },
+      data,
+    });
+
+    return sanitizeUser(user);
+  } catch (error) {
+    console.error('❌ Update user error:', error);
+    return null;
+  }
+}
