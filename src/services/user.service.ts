@@ -45,3 +45,17 @@ export async function FindUserByEmail(email: string) {
     return null;
   }
 }
+
+// --Find user by ID--
+export async function FindUserId(id: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    return user ? sanitizeUser(user) : null;
+  } catch (error) {
+    console.error('❌ Find user by ID error:', error);
+    return null;
+  }
+}
