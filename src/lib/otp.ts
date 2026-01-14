@@ -130,7 +130,7 @@ export async function verifyOtp(
     }
 
     // --Verify the code--
-    if (otpRecord.code === code) {
+    if (otpRecord.code !== code) {
       await prisma.oTPCode.update({
         where: { id: otpRecord.id },
         data: { attempts: otpRecord.attempts + 1 },
@@ -161,5 +161,24 @@ export async function verifyOtp(
       valid: false,
       message: 'Failed to verify OTP. Please try again later.',
     };
+  }
+}
+
+// --Clean up expired OTPs from database--
+export async function cleanUpExpiredOtps(): Promise<number> {
+  try {
+    const result = await prisma.oTPCode.deleteMany({
+      where: {
+        expiresAt: {
+          lt: new Date(),
+        },
+      },
+    });
+
+    console.log(`🧹 Cleaned up ${result.count} expired OTPs.`);
+    return result.count;
+  } catch (error) {
+    console.error('❌ cleanUpExpiredOtps error:', error);
+    return 0;
   }
 }
