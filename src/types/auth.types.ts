@@ -6,7 +6,7 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
-  otp: string; 
+  otp: string;
 }
 
 export interface SendOtpRequest {
@@ -42,7 +42,7 @@ export interface SendOtpResponse {
   message: string;
   expiresIn: number;
   debug?: {
-    otpCode: string;
+    otp: string;
   };
 }
 
