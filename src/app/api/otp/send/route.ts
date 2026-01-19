@@ -1,40 +1,41 @@
 // --Handles the POST api/otp/send request to send an OTP to a user's email address.
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { sendOtpschema } from '@/utils/validators';
 import { sendOtp } from '@/lib/otp';
 import { UserExists } from '@/services/user.service';
 import { maskEmail } from '@/utils/helpers';
 import { ApiResponse, SendOtpResponse } from '@/types/auth.types';
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    // Step 1: Parse request body
+    const body = await req.json();
 
-    // --Validate request body--
+    // Step 2: Validate request data
     const validation = sendOtpschema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: validation.error.issues[0]?.message || 'Invalid request data',
+          error: validation.error.issues[0].message || 'Invalid request data.',
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const { email, purpose } = validation.data;
 
-    // --Check user existence--
+    // Step 3: Check if user exists (based on purpose)
     const exists = await UserExists(email);
 
     if (purpose === 'registration' && exists) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: 'Email is already registered. Please log in instead.',
+          error: 'An account with this email already exists. Please login instead.',
         },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
@@ -44,11 +45,11 @@ export async function POST(request: Request) {
           success: false,
           error: 'No account found with this email. Please register first.',
         },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
-    // --Send OTP--
+    // Step 4: Send OTP
     const result = await sendOtp(email, purpose);
 
     if (!result.success) {
@@ -57,17 +58,17 @@ export async function POST(request: Request) {
           success: false,
           error: result.message,
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
-    // --Mask email for privacy--
+    // Step 5: Return success response
     const maskedEmail = maskEmail(email);
-
+    
     const response: SendOtpResponse = {
       success: true,
       message: `Verification code sent to ${maskedEmail}`,
-      expiresIn: 10 * 60,
+      expiresIn: 600, // 10 minutes in seconds
     };
 
     // Include OTP in development mode for testing
@@ -80,16 +81,17 @@ export async function POST(request: Request) {
         success: true,
         data: response,
       },
-      { status: 200 },
+      { status: 200 }
     );
+
   } catch (error) {
-    console.error('❌ Send OTP error:', error);
+    console.error('❌ Send OTP API error:', error);
     return NextResponse.json<ApiResponse>(
       {
         success: false,
         error: 'An unexpected error occurred. Please try again.',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
